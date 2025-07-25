@@ -11,4 +11,4 @@ app = [
     "main",
     "index.py"]
 for i in app:
-print(i)
+print(i) # pylint: disable=print-statement
