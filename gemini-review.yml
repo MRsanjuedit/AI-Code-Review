@@ -1,0 +1,34 @@
+# .github/workflows/gemini-review.yml
+name: AI Code Review
+on: [pull_request, push]
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          pip install google-generativeai pydantic backoff \
+                      unidiff pylint flake8 mypy
+      - name: Collect static analysis
+        run: |
+          pylint --output-format=json:lint.json .
+          # flake8 and mypy can be merged similarly
+
+      - name: Run Gemini review
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          git diff origin/main...HEAD > diff.patch
+          python ai_review.py --diff diff.patch --lint lint.json \
+                              --repo ${{ github.repository }} \
+                              --ref ${{ github.event.pull_request.number }} \
+                              > review.json
+
+      - name: Post PR comments
+        # (Implement post_comments.py using GitHub REST API)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python post_comments.py review.json
