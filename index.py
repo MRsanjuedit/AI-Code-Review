@@ -12,4 +12,4 @@ app = [
     "index.py",
     "post_comments.py",]  
 for i in app:
-print(i) # pylint: disable=print-statement
+    print(i) # pylint: disable=print-statement
