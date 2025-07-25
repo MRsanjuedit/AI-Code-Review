@@ -9,6 +9,7 @@ app = [
     "mypy",
     "index",
     "main",
-    "index.py"]
+    "index.py",
+    "post_comments.py",]  
 for i in app:
 print(i) # pylint: disable=print-statement
